@@ -1,0 +1,5 @@
+add_executable(guess_number_client client.c)
+add_executable(guess_number_server server.c)
+
+target_link_libraries(guess_number_client PRIVATE descriptor)
+target_link_libraries(guess_number_server PRIVATE descriptor)
