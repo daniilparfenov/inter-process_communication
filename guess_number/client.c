@@ -10,7 +10,19 @@
 #define FIFO_PATH "/tmp/fifo_file"
 #define BUFFER_SIZE 128
 
+// Обработчик сигнала
+void handle_signal(int sig) {
+    if (sig == SIGINT) {
+        printf("\nReceived SIGINT. Cleaning up...\n");
+        unlink(FIFO_PATH);
+        exit(0);
+    }
+}
+
 int main() {
+    // Установка обработчика сигнала SIGINT
+    signal(SIGINT, handle_signal);
+
     // Ожидание создания FIFO
     while (access(FIFO_PATH, F_OK) == -1) {
         printf("Waiting to start server...\n");
@@ -50,6 +62,14 @@ int main() {
         // Запись ответа от сервера в response
         char response[BUFFER_SIZE];
         ssize_t msg_size = read_bytes_from_file(ptr_fds_read, response);
+
+        // Сервер закрыл соединение
+        if (msg_size == 0) {
+            printf("Error: Server has closed the connection. Exiting...\n");
+            close_fds_connection(ptr_fds_read);
+            break;
+        }
+
         response[msg_size] = '\0';
         close_fds_connection(ptr_fds_read);
         printf("Received: %s\n\n", response);

@@ -19,11 +19,19 @@ void handle_signal(int sig) {
         unlink(FIFO_PATH);
         exit(0);
     }
+    if (sig == SIGPIPE) {
+        printf("\nReceived SIGPIPE. Broken pipe\n");
+        unlink(FIFO_PATH);
+        exit(0);
+    }
 }
 
 int main() {
     // Установка обработчика сигнала SIGINT
     signal(SIGINT, handle_signal);
+
+    // Установка обработчика сигнала SIGPIPE
+    signal(SIGPIPE, handle_signal);
 
     srand(time(NULL));
 
