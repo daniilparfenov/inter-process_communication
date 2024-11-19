@@ -15,12 +15,12 @@
 // Обработчик сигнала
 void handle_signal(int sig) {
     if (sig == SIGINT) {
-        printf("\nReceived SIGINT. Cleaning up...\n");
+        printf("\n[Server] Received SIGINT.\n");
         unlink(FIFO_PATH);
         exit(0);
     }
     if (sig == SIGPIPE) {
-        printf("\nReceived SIGPIPE. Broken pipe\n");
+        printf("\n[Server] Received SIGPIPE.\n");
     }
 }
 
@@ -40,7 +40,8 @@ int main() {
         }
     }
 
-    printf("Server started. Waiting for client...\n");
+    printf("[Server] Server started successfully.\n");
+    printf("[Server] Waiting for client...\n");
 
     // Создаем дескриптор для чтения
     file_descriptor_t fds_read;
@@ -56,15 +57,25 @@ int main() {
     size_t game_counter = 1;
     size_t game_attempt = 0;
 
-    printf("\nGame number %zu\n\n", game_counter);
+    printf("[Server] Game number %zu\n", game_counter);
 
     while (1) {
         // Открытие FIFO на чтение
         open_fds_connection(ptr_fds_read, FIFO_PATH, O_RDONLY);
         ++game_attempt;
 
+        sleep(3);
         // Чтение сообщения от клиента
         ssize_t msg_size = read_bytes_from_file(ptr_fds_read, buffer);
+
+        // Пользователь закрыл соединение
+        if (msg_size == 0) {
+            printf("[Server] Client has closed the connection (reading)\n");
+            game_counter = 1;
+            game_attempt = 0;
+            continue;
+        }
+
         close_fds_connection(ptr_fds_read);
 
         buffer[msg_size] = '\0';  // Нулевой символ в конце строки
@@ -86,18 +97,21 @@ int main() {
             msg = "The guessed number is more";
         }
 
-        sleep(1);
+        sleep(3);
 
         // Пользователь закрыл соединение
         if (write_bytes_to_file(ptr_fds_write, msg) == -1) {
-            printf("Client has closed the connection\n");
+            printf("[Server] Client has closed the connection (writing)\n");
+            game_counter = 1;
+            game_attempt = 0;
+            continue;
         }
 
         // Отправка ответа пользователю
         close_fds_connection(ptr_fds_write);
         printf("[Attempt %zu] >> Sent: %s\n\n", game_attempt, msg);
         if (estimated == guessed_number) {
-            printf("Game number %zu\n\n", game_counter);
+            printf("[Server] Game number %zu\n\n", game_counter);
             game_attempt = 0;
         }
     }
