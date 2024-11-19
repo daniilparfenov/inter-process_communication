@@ -12,6 +12,7 @@
 
 int main() {
     while (access(FIFO_PATH, F_OK) == -1) {
+        printf("Waiting to start server...\n");
         sleep(1);
     }
     printf("Connected to server. Starting automatic guess...\n");
@@ -39,9 +40,9 @@ int main() {
         if (strcmp(response, "You guessed the number!") == 0) {
             printf("Client won! The number is %d.\n", guess);
             break;
-        } else if (strcmp(response, "Less") == 0) {
+        } else if (strcmp(response, "The guessed number is more") == 0) {
             low = guess + 1;
-        } else if (strcmp(response, "More") == 0) {
+        } else if (strcmp(response, "The guessed number is less") == 0) {
             high = guess - 1;
         }
         if (low > high) {
