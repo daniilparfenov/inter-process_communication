@@ -12,7 +12,17 @@
 #define FIFO_PATH "/tmp/fifo_file"
 #define BUFFER_SIZE 128
 
+void handle_signal(int sig) {
+    if (sig == SIGINT) {
+        printf("\nReceived SIGINT. Cleaning up...\n");
+        unlink(FIFO_PATH);
+        exit(0);
+    }
+}
+
 int main() {
+    signal(SIGINT, handle_signal);
+
     srand(time(NULL));
     if (mkfifo(FIFO_PATH, 0666) == -1) {
         if (errno != EEXIST) {

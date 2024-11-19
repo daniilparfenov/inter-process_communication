@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "../include/descriptor.h"
+#include "descriptor.h"
 
 #define FIFO_PATH "/tmp/fifo_file"
 #define BUFFER_SIZE 128
