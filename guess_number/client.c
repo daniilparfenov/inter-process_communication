@@ -17,7 +17,9 @@ int main() {
     }
     printf("Connected to server. Starting automatic guess...\n");
     file_descriptor_t fds_write;
+    file_descriptor_t *ptr_fds_write = &fds_write;
     file_descriptor_t fds_read;
+    file_descriptor_t *ptr_fds_read = &fds_read;
     int low = 1;
     int high = 100;
     int guess;
@@ -26,11 +28,11 @@ int main() {
         printf("Sent: %d\n", guess);
         char guess_str[BUFFER_SIZE];
         snprintf(guess_str, BUFFER_SIZE, "%d", guess);
-        file_descriptor_t *ptr_fds_write = &fds_write;
+
         open_fds_connection(ptr_fds_write, FIFO_PATH, O_WRONLY);
         write_bytes_to_file(ptr_fds_write, guess_str);
         close_fds_connection(ptr_fds_write);
-        file_descriptor_t *ptr_fds_read = &fds_read;
+
         open_fds_connection(ptr_fds_read, FIFO_PATH, O_RDONLY);
         char response[BUFFER_SIZE];
         ssize_t msg_size = read_bytes_from_file(ptr_fds_read, response);
@@ -50,6 +52,9 @@ int main() {
             break;
         }
     }
+
+    free(ptr_fds_read);
+    free(ptr_fds_write);
 
     return 0;
 }
