@@ -36,9 +36,5 @@ ssize_t read_bytes_from_file(file_descriptor_t* fds, void* buff) {
 
 ssize_t write_bytes_to_file(file_descriptor_t* fds, const void* buff) {
     ssize_t bytes_write = write(fds->connection_id, buff, strlen(buff));
-    if (bytes_write == -1) {
-        close(fds->connection_id);
-        handle_error("write");
-    }
     return bytes_write;
 }

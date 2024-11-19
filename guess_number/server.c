@@ -21,8 +21,6 @@ void handle_signal(int sig) {
     }
     if (sig == SIGPIPE) {
         printf("\nReceived SIGPIPE. Broken pipe\n");
-        unlink(FIFO_PATH);
-        exit(0);
     }
 }
 
@@ -89,8 +87,12 @@ int main() {
 
         sleep(1);
 
+        // Пользователь закрыл соединение
+        if (write_bytes_to_file(ptr_fds_write, msg) == -1) {
+            printf("Client has closed the connection\n");
+        }
+
         // Отправка ответа пользователю
-        write_bytes_to_file(ptr_fds_write, msg);
         close_fds_connection(ptr_fds_write);
         printf("[Attempt %zu] >> Sent: %s\n\n", game_attempt, msg);
         if (estimated == guessed_number) {

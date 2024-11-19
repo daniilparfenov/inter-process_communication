@@ -14,8 +14,7 @@
 // Обработчик сигнала
 void handle_signal(int sig) {
     if (sig == SIGINT) {
-        printf("\nReceived SIGINT. Cleaning up...\n");
-        unlink(FIFO_PATH);
+        printf("\nReceived SIGINT\n");
         exit(0);
     }
 }
