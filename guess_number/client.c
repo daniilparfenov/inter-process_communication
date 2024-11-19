@@ -53,8 +53,5 @@ int main() {
         }
     }
 
-    free(ptr_fds_read);
-    free(ptr_fds_write);
-
     return 0;
 }
