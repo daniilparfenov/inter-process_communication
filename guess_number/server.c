@@ -79,6 +79,7 @@ int main() {
         if (estimated == guessed_number) {
             msg = "You guessed the number!";
             ++game_counter;
+            guessed_number = rand() % 100 + 1;
         } else if (estimated > guessed_number) {
             msg = "The guessed number is less";
         } else {
