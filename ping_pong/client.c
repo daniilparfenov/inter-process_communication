@@ -62,10 +62,11 @@ int main(int argc, char* argv[]) {
     start_client(FIFO_PATH);
 
     while (1) {
+        printf("\n");
         // Попытка получить сообщение от сервера
         if (receive_message(buffer, BUFFER_SIZE, FIFO_PATH) < 0) {
             printf("Receive message error\n");
-            printf("The connection to the server has been terminated maybe\n");
+            printf("Note: the connection to the server has been terminated maybe\n");
             break;
         } else {
             if (strcmp(buffer, "ping") != 0) {
