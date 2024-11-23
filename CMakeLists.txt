@@ -3,6 +3,7 @@ project(inter-process-communication)
 
 include_directories(include)
 add_library(descriptor src/descriptor.c)
+add_library(inter-process-communication src/inter-process-communication.c)
 
 add_subdirectory(ping_pong)
 add_subdirectory(guess_number)
