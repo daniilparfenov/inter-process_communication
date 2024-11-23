@@ -1,3 +1,4 @@
+#include <getopt.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,7 +55,7 @@ int main(int argc, char* argv[]) {
     // Установка обработчика сигнала SIGPIPE
     signal(SIGPIPE, handle_signal);
 
-    const char* message = "pong";
+    const char* message = "ping";
     char buffer[BUFFER_SIZE];
     int query_number = get_queries_number_from_console_flag(argc, argv);
 
@@ -63,18 +64,18 @@ int main(int argc, char* argv[]) {
 
     while (1) {
         printf("\n");
+        send_message(message, FIFO_PATH);
+        printf("Sent message: %s\n", message);
         // Попытка получить сообщение от сервера
         if (receive_message(buffer, BUFFER_SIZE, FIFO_PATH) < 0) {
             printf("Receive message error\n");
             printf("Note: the connection to the server has been terminated maybe\n");
             break;
         } else {
-            if (strcmp(buffer, "ping") != 0) {
+            if (strcmp(buffer, "pong") != 0) {
                 printf("Wrong answer from server received: %s\n", buffer);
             } else {
                 printf("Correct answer from server received: %s\n", buffer);
-                send_message(message, FIFO_PATH);
-                printf("Sent message: %s\n", message);
             }
         }
         sleep(2);

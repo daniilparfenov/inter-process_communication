@@ -28,7 +28,7 @@ void start_client(const char* fifo_path) {
 ssize_t send_message(const char* message, const char* fifo_path) {
     int fd_writer = open(fifo_path, O_WRONLY);
     if (fd_writer < 0) return -1;
-    ssize_t written_bytes = write(fd_writer, message, strlen(message));
+    ssize_t written_bytes = write(fd_writer, message, strlen(message) + 1);
     close(fd_writer);
     return written_bytes;
 }

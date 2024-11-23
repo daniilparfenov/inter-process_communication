@@ -28,9 +28,9 @@ int main() {
     // Установка обработчика сигнала SIGPIPE
     signal(SIGPIPE, handle_signal);
 
-    const char* message = "ping";
+    const char* message = "pong";
     char buffer[BUFFER_SIZE];
-    int iteration_num = 0;
+    int cur_query_num = 0;
 
     printf("Starting server...\n");
     if (start_server(FIFO_PATH) < 0) {
@@ -42,19 +42,20 @@ int main() {
     printf("Waiting for a client...\n");
 
     while (1) {
-        send_message(message, FIFO_PATH);
-        printf("\nIteration #%d\n", iteration_num);
-        printf("Sent message: %s\n", message);
+        printf("\n");
         if (receive_message(buffer, BUFFER_SIZE, FIFO_PATH) < 0) {
             printf("receive message error\n");
         } else {
-            if (strcmp(buffer, "pong") != 0) {
-                printf("Wrong answer from client received: %s\n", buffer);
+            cur_query_num++;
+            printf("Current query number: %d\n", cur_query_num);
+            if (strcmp(buffer, "ping") != 0) {
+                printf("Wrong query from client received: %s\n", buffer);
             } else {
-                printf("Correct answer from client received: %s\n", buffer);
+                printf("Correct query from client received: %s\n", buffer);
             }
+            send_message(message, FIFO_PATH);
+            printf("Sent answer message: %s\n", message);
         }
-        iteration_num++;
     }
 
     unlink(FIFO_PATH);  // Удаление FIFO
