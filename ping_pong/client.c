@@ -66,6 +66,7 @@ int main(int argc, char* argv[]) {
         printf("\n");
         send_message(message, FIFO_PATH);
         printf("Sent message: %s\n", message);
+        sleep(3);
         // Попытка получить сообщение от сервера
         if (receive_message(buffer, BUFFER_SIZE, FIFO_PATH) < 0) {
             printf("Receive message error\n");

@@ -17,7 +17,7 @@ void handle_signal(int sig) {
         exit(0);
     }
     if (sig == SIGPIPE) {
-        printf("\n[Server] Received SIGPIPE.\n");
+        printf("\n[Server] Сonnection with the client is lost.\n");
     }
 }
 
@@ -53,8 +53,13 @@ int main() {
             } else {
                 printf("Correct query from client received: %s\n", buffer);
             }
-            send_message(message, FIFO_PATH);
-            printf("Sent answer message: %s\n", message);
+
+            if (send_message(message, FIFO_PATH) < 0) {
+                printf("Sending response error\n");
+                printf("Note: the client did not read the response maybe\n");
+            } else {
+                printf("Sent answer message: %s\n", message);
+            }
         }
     }
 

@@ -8,6 +8,19 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+int clear_fifo(const char* fifo_path) {
+    int fd = open(fifo_path, O_RDONLY | O_NONBLOCK);
+    if (fd < 0) {
+        return -1;
+    }
+    char buffer[256];
+    while (read(fd, buffer, sizeof(buffer)) > 0) {
+        // Просто считываем данные
+    }
+    close(fd);
+    return 0;
+}
+
 int start_server(const char* fifo_path) {
     if (mkfifo(fifo_path, 0666) == -1) {
         if (errno != EEXIST) {
@@ -26,6 +39,9 @@ void start_client(const char* fifo_path) {
 }
 
 ssize_t send_message(const char* message, const char* fifo_path) {
+    if (clear_fifo(fifo_path) < 0) {
+        return -1;
+    }
     int fd_writer = open(fifo_path, O_WRONLY);
     if (fd_writer < 0) return -1;
     ssize_t written_bytes = write(fd_writer, message, strlen(message) + 1);
